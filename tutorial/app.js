@@ -1,27 +1,43 @@
-const fs   = require('fs');
+const fs = require('fs');
 const http = require('http');
-
 const server = http.createServer();
+const path = require('path');
+const mime = {
+  ".html": "text/html",
+  ".css": "text/css"
+};
 
-// リクエスト受付
+// リクエスト受け付け
 server.on('request', function(req, res) {
 
-    let data; // 返却htmlデータ
-    const basePath = __dirname + "/views/html";
+  // 返却htmlデータ格納用
+  let data;
+  const basePath = __dirname + "/views";
 
-    switch (req.url) {
-      case '/top.html':
-          data = fs.readFileSync(basePath + "/top.html", "utf8");;
-          break;
-      case '/favicon.ico':
-          data = ""; // do nothing.
-          break;
-      default:
-          data = fs.readFileSync(basePath + "/err.html", "utf8");;
-          break;
-    }
+  switch(req.url) {
+    case '/html/index.html':
+      data = fs.readFileSync(basePath + "/html/index.html", "utf8");;
+      break;
+    case '/html/top.html':
+      data = fs.readFileSync(basePath + "/html/top.html", "utf8");;
+      break;
+    case '/html/main.html':
+      data = fs.readFileSync(basePath + "/html/main.html", "utf8");;
+      break;
+    case '/css/tutorial.css':
+      data = fs.readFileSync(basePath + "/css/tutorial.css", "utf8");;
+      break;
+    case '/html/favicon.ico':
+      data = "";
+      break;
+    default:
+      data = fs.readFileSync(basePath + "/html/err.html", "utf8");;
+      break;
+  }
+  let fullPath = __dirname + req.url;
+  console.log(path.extname(fullPath));
 
-    res.writeHead(200, {"Content-Type" : "text/html"});
+    res.writeHead(200, {"Content-Type" : mime[path.extname(fullPath)] || "text/plain"});
     res.write(data);
     res.end();
 });
