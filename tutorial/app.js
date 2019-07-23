@@ -4,7 +4,8 @@ const server = http.createServer();
 const path = require('path');
 const mime = {
   ".html": "text/html",
-  ".css": "text/css"
+  ".css": "text/css",
+  ".js": "text/javascript"
 };
 
 // リクエスト受け付け
@@ -14,25 +15,37 @@ server.on('request', function(req, res) {
   let data;
   const basePath = __dirname + "/views";
 
+  let elemList = {};
+  elemList.index = '/html/index.html';
+  elemList.top = '/html/top.html';
+  elemList.main = '/html/main.html';
+  elemList.err = '/html/err.html';
+  elemList.css = '/css/tutorial.css';
+  elemList.fav = '/html/favicon.ico';
+  elemList.js = '/js/index.js';
+
   if(req.method === 'GET') {
     switch(req.url) {
-      case '/html/index.html':
-        data = fs.readFileSync(basePath + "/html/index.html", "utf8");
+      case elemList.index:
+        data = fs.readFileSync(basePath + elemList.index, "utf8");
         break;
-      case '/html/top.html':
-        data = fs.readFileSync(basePath + "/html/top.html", "utf8");
+      case elemList.top:
+        data = fs.readFileSync(basePath + elemList.top, "utf8");
         break;
-      case '/html/main.html':
-        data = fs.readFileSync(basePath + "/html/main.html", "utf8");
+      case elemList.main:
+        data = fs.readFileSync(basePath + elemList.main, "utf8");
         break;
-      case '/css/tutorial.css':
-        data = fs.readFileSync(basePath + "/css/tutorial.css", "utf8");
+      case elemList.css:
+        data = fs.readFileSync(basePath + elemList.css, "utf8");
         break;
-      case '/html/favicon.ico':
+      case elemList.js:
+        data = fs.readFileSync(basePath + elemList.js, "utf8");
+        break;
+      case elemList.fav:
         data = "";
         break;
       default:
-        data = fs.readFileSync(basePath + "/html/err.html", "utf8");
+        data = fs.readFileSync(basePath + elemList.err, "utf8");
         break;
     }
     let fullPath = __dirname + req.url;
@@ -56,7 +69,7 @@ server.on('request', function(req, res) {
 
       // htmlの一部をpostの情報に変換
       page = page.replace("<%=replace %>", "名前：" + array.name + "\n" + "年齢：" + array.age);
-      
+
       res.writeHead(200, {"Content-Type" : "text/html"});
       res.write(page);
       res.end();
