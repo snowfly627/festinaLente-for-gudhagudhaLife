@@ -15,37 +15,32 @@ server.on('request', function(req, res) {
   let data;
   const basePath = __dirname + "/views";
 
-  let elemList = {};
-  elemList.index = '/html/index.html';
-  elemList.top = '/html/top.html';
-  elemList.main = '/html/main.html';
-  elemList.err = '/html/err.html';
-  elemList.css = '/css/tutorial.css';
-  elemList.fav = '/html/favicon.ico';
-  elemList.js = '/js/index.js';
+  const charCode = "utf8";
+
+  let reqType = {
+    "index" : "/html/index.html",
+    "top" : "/html/top.html",
+    "main" : "/html/main.html",
+    "err" : "/html/err.html",
+    "css" : "/css/tutorial.css",
+    "fav" : "/html/favicon.ico",
+    "js" : "/js/index.js"
+  };
 
   if(req.method === 'GET') {
     switch(req.url) {
-      case elemList.index:
-        data = fs.readFileSync(basePath + elemList.index, "utf8");
+      case reqType.index:
+      case reqType.top:
+      case reqType.main:
+      case reqType.css:
+      case reqType.js:
+        data = fs.readFileSync(basePath + req.url, charCode);
         break;
-      case elemList.top:
-        data = fs.readFileSync(basePath + elemList.top, "utf8");
-        break;
-      case elemList.main:
-        data = fs.readFileSync(basePath + elemList.main, "utf8");
-        break;
-      case elemList.css:
-        data = fs.readFileSync(basePath + elemList.css, "utf8");
-        break;
-      case elemList.js:
-        data = fs.readFileSync(basePath + elemList.js, "utf8");
-        break;
-      case elemList.fav:
+      case reqType.fav:
         data = "";
         break;
       default:
-        data = fs.readFileSync(basePath + elemList.err, "utf8");
+        data = fs.readFileSync(basePath + reqType.err, charCode);
         break;
     }
     let fullPath = __dirname + req.url;
@@ -58,17 +53,18 @@ server.on('request', function(req, res) {
       data = data.toString();
       data = data.split('&');
 
-      let array = {};
+      // postデータ格納用
+      let postData = {};
 
       for(let i = 0; i<data.length; i++) {
-        let _data = data[i].split('=');
-        array[_data[0]] = _data[1];
+        let postDataName = data[i].split('=');
+        postData[postDataName[0]] = postDataName[1];
       }
 
       let page = fs.readFileSync(basePath + "/html/postPage.html", "utf8");
 
       // htmlの一部をpostの情報に変換
-      page = page.replace("<%=replace %>", "名前：" + array.name + "\n" + "年齢：" + array.age);
+      page = page.replace("<%=replace %>", "名前：" + postData.name + "\n" + "年齢：" + postData.age);
 
       res.writeHead(200, {"Content-Type" : "text/html"});
       res.write(page);

@@ -45,4 +45,4 @@ nodejsのバージョン管理は面倒＋今後のバージョンアップデ�
   ```
   Ctrl + c
   ```
-- トップ画面(`http://localhost:3000/err.html`)にアクセス
+- トップ画面(`http://localhost:3000/html/index.html`)にアクセス
